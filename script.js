@@ -29,7 +29,7 @@ form.addEventListener("submit", handleSearch);
 // Unit change from dropdown
 unitsSelect.addEventListener("change", () => {
 
-    // split turns the city into an array seperated by the comma
+    // Split turns the city into an array seperated by the comma
     const cityDisplayed = cityNameE1.textContent.split(",")[0];
 
     // If a valid city is displayed, refetch using new units
@@ -46,12 +46,12 @@ async function getCoordinates(city) {
         params: {
             // User input
             name: city,
-            // limits to the top match
+            // Limits to the top match
             count: 1
         }
     });
 
-    //Extracting that first result
+    // Extracting that first result
     const result = response.data.results && response.data.resuls[0];
     if (!result) throw new Error("City not found");
 
@@ -61,3 +61,102 @@ async function getCoordinates(city) {
         name: `${result.name}, ${result.country}`
     };
 }
+
+//Fetch current weather data
+async function fetchWeather(lat, lon, units = "metric") {
+    //Decides which units to use
+    const unit Params = {
+        temperature_unit: units === "imperial" ? "fahrenheit" : "celsius",
+        wind_speed_unit: units === "imperial" ? "mph" : "kmh",
+        precipitation_unit: units === "imperial" ? "inch" : "mm"
+    };
+
+    // Make API request (had to do hourly details for humidity feels like, etc. not on their current weather object)
+    const response = await axios.get(weatherApi, {
+        params: {
+            latitiude: lat,
+            longitude: lon,
+            // Gives current temp, wind speed, etc.
+            current_weather: true,
+            hourly: "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation",
+            // Adjusts to local time zone
+            timezone: "auto",
+            ...unitParams
+        }
+    });
+
+    return response.data;
+}
+
+// Handle the search event (user submitted form)
+async function handleSearch(event) {
+    // Prevents page reload on form submit
+    event.preventDefault();
+
+    const city = cityInput.ariaValueMax.trim();
+    if (!city) {
+        alert("Please enter a city name.");
+        return,
+    }
+
+    // Determine selected units
+    const units = unitsSelect.value !== "Units" ? unitsSelect.value : "metric";
+
+    try {
+        // 1. Get coordinates of city
+        const { latitude, longitude, name } = await getCoordinates(city);
+
+        // 2. Get weather data from Open-Meteo
+        const weatherData = await fetchWeather(latitude, longitude, units);
+
+        // 3. Update UI
+        updateUI(name,weatherData, units);
+    }   catch (error) {
+        console.error(error);
+        alert("City not found or data unavailable. Please try again.")
+    }
+}
+
+// Update placeholders in the UI
+function updateUI(locationName, data, units) {
+    // Determine units
+    const tempUnit = units === "imperial" ? "°F" : "°C";
+    const speedUnit = units === "imperial" ? "mph" : "km/h";
+    const precipUnit = units === "imperial" ? "inch" : "mm";
+
+    // Get current weather section of response
+    const current = data.current_weather;
+}
+
+// UPDATE TEXT CONTENT
+
+// City name
+cityNameE1.textContent = locationName;
+
+// Date
+const currentDate = new Date(current.time);
+dateE1.textContent = currentDate.toLocaleDateString("en-Us", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+});
+
+// Temperature 
+tempE1.textContent = `${Math.round(current.temperature)}${tempUnit}`;
+
+// Feels like
+const feelsLike = 
+    data.hourly.apparent-temperature && data.hourly.apparent_temperature[0]
+    ? Math.round(data.hourly.apparent_temperature[0])
+    . current.temperature;
+feelsLikeE1.textContent = `${feelsLike}${tempUnit}`;
+
+// Humidity
+humidityE1.textContent = `${data.hourly.relative_humidity_2m[0]}%`;
+
+// Wind Speed
+windE1.textContent = `${Math.round(current.windspeed)} ${speedUnit}`;
+
+// Precipitation
+  precipitationEl.textContent = `${data.hourly.precipitation[0]} ${precipUnit}`;
