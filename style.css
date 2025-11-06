@@ -20,7 +20,11 @@ body {
     font-size: 18px;
 }
 
-h1,h3,h4,h5,h6 {
+h1,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Bricolage Grotesque', sans-serif;
 }
 
@@ -35,11 +39,43 @@ h2 {
 }
 
 /* Drop down */
+.dropdown-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.icon-units {
+    position: absolute;
+    left: 10px;
+    /* From style guide */
+    width: 18px;
+    height: 18px;
+}
 
 #drop-down {
+    /* removes default browser arrow (my epic final battle for level 2, fought the browser putting its own arrow in)*/
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     background-color: var(--neutral-700);
     border-color: var(--neutral-700);
     color: var(--neutral-200);
+    /* Giving space for icons */
+    padding-left: 35px;
+    padding-right: 30px;
+    /* Adds MY dropdown arrow */
+    background-image: url('./assets/images/icon-dropdown.svg');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px auto;
+}
+
+
+
+/* Search Bar */
+#search-form {
+    margin-top: 4rem;
 }
 
 #city-input {
@@ -47,6 +83,7 @@ h2 {
     border-color: var(--neutral-700);
     color: var(--neutral-0);
 }
+
 /* Current Weather Card */
 .current-weather-card {
     min-height: 375px;
@@ -110,11 +147,12 @@ h2 {
 /* Media Query For Mobile */
 @media (max-width: 768px) {
     .current-weather-card {
-    background: url('./assets/images/bg-today-small.svg') no-repeat center/cover;
+        background: url('./assets/images/bg-today-small.svg') no-repeat center/cover;
     }
+
     #temp {
-    font-family: 'DM Sans', sans-serif;
-    font-style: italic;
-    font-size: 80px;
+        font-family: 'DM Sans', sans-serif;
+        font-style: italic;
+        font-size: 60px;
     }
 }

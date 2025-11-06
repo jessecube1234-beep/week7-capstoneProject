@@ -1,11 +1,11 @@
 // Base URLs
 // for converting city to geo location
-const geoApi = "https://geocoding-api.open-meteo.com/v1/search";
+const geoApi = "https://geocoding-api.open-meteo.com/v1/search?name=Berlin&count=10&language=en&format=json";
 // for fetching weather data
 const weatherApi = "https://api.open-meteo.com/v1/forecast";
 
 // Important DOM Elements
-const form = document.getElemenetById("search-form");
+const form = document.getElementById("search-form");
 const cityInput = document.getElementById("city-input");
 const unitsSelect = document.getElementById("drop-down");
 
@@ -40,7 +40,7 @@ unitsSelect.addEventListener("change", () => {
 
 // MAIN FUNCTIONS
 
-// Getting coordinates for city using Open-Meteo's Geocoding Api
+// Getting coordinates for city using Open Meteos Geocoding Api
 async function getCoordinates(city) {
     const response = await axios.get(geoApi, {
         params: {
@@ -52,11 +52,11 @@ async function getCoordinates(city) {
     });
 
     // Extracting that first result
-    const result = response.data.results && response.data.resuls[0];
+    const result = response.data.results && response.data.results[0];
     if (!result) throw new Error("City not found");
 
     return {
-        latitiude: result.latitude,
+        latitude: result.latitude,
         longitude: result.longitude,
         name: `${result.name}, ${result.country}`
     };
@@ -65,7 +65,7 @@ async function getCoordinates(city) {
 //Fetch current weather data
 async function fetchWeather(lat, lon, units = "metric") {
     //Decides which units to use
-    const unit Params = {
+    const unitParams = {
         temperature_unit: units === "imperial" ? "fahrenheit" : "celsius",
         wind_speed_unit: units === "imperial" ? "mph" : "kmh",
         precipitation_unit: units === "imperial" ? "inch" : "mm"
@@ -74,7 +74,7 @@ async function fetchWeather(lat, lon, units = "metric") {
     // Make API request (had to do hourly details for humidity feels like, etc. not on their current weather object)
     const response = await axios.get(weatherApi, {
         params: {
-            latitiude: lat,
+            latitude: lat,
             longitude: lon,
             // Gives current temp, wind speed, etc.
             current_weather: true,
@@ -93,12 +93,17 @@ async function handleSearch(event) {
     // Prevents page reload on form submit
     event.preventDefault();
 
-    const city = cityInput.ariaValueMax.trim();
+    const city = cityInput.value.trim();
     if (!city) {
         alert("Please enter a city name.");
-        return,
+        return;
     }
 
+    // Keeps only city name (ran into issues when typing a city with a state or country in search)
+        if (city.includes(",")) {
+        let city = cityInput.value.trim();
+    }
+    
     // Determine selected units
     const units = unitsSelect.value !== "Units" ? unitsSelect.value : "metric";
 
@@ -110,10 +115,10 @@ async function handleSearch(event) {
         const weatherData = await fetchWeather(latitude, longitude, units);
 
         // 3. Update UI
-        updateUI(name,weatherData, units);
+        updateUI(name, weatherData, units);
     }   catch (error) {
         console.error(error);
-        alert("City not found or data unavailable. Please try again.")
+        alert("Please enter a valid city name without commas or extra details.")
     }
 }
 
@@ -126,7 +131,6 @@ function updateUI(locationName, data, units) {
 
     // Get current weather section of response
     const current = data.current_weather;
-}
 
 // UPDATE TEXT CONTENT
 
@@ -135,7 +139,7 @@ cityNameE1.textContent = locationName;
 
 // Date
 const currentDate = new Date(current.time);
-dateE1.textContent = currentDate.toLocaleDateString("en-Us", {
+dateE1.textContent = currentDate.toLocaleDateString("en-US", {
     weekday: "long",
     month: "short",
     day: "numeric",
@@ -147,9 +151,9 @@ tempE1.textContent = `${Math.round(current.temperature)}${tempUnit}`;
 
 // Feels like
 const feelsLike = 
-    data.hourly.apparent-temperature && data.hourly.apparent_temperature[0]
+    data.hourly.apparent_temperature && data.hourly.apparent_temperature[0]
     ? Math.round(data.hourly.apparent_temperature[0])
-    . current.temperature;
+    : current.temperature;
 feelsLikeE1.textContent = `${feelsLike}${tempUnit}`;
 
 // Humidity
@@ -159,4 +163,27 @@ humidityE1.textContent = `${data.hourly.relative_humidity_2m[0]}%`;
 windE1.textContent = `${Math.round(current.windspeed)} ${speedUnit}`;
 
 // Precipitation
-  precipitationEl.textContent = `${data.hourly.precipitation[0]} ${precipUnit}`;
+precipitationE1.textContent = `${data.hourly.precipitation[0]} ${precipUnit}`;
+
+//UPDATE ICON
+  const code = current.weathercode;
+  const iconMap = {
+    0: "sunny",
+    1: "mainly_clear",
+    2: "partly_cloudy",
+    3: "overcast",
+    45: "fog",
+    48: "rime_fog",
+    51: "drizzle",
+    61: "rain",
+    71: "snow",
+    80: "rain_showers",
+    95: "thunderstorm"
+  };
+
+    //Changes Icon dynamically (creates the file path based on the weather code)
+    const condition = iconMap[code] || "sunny";
+    weatherIcon.src = `./assets/images/icon-${condition}.webp`;
+    weatherIcon.alt = condition.replace("_", " ");
+}
+
