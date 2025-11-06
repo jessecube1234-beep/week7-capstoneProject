@@ -107,6 +107,7 @@ h2 {
     color: var(--neutral-200);
 }
 
+/* Media Query For Mobile */
 @media (max-width: 768px) {
     .current-weather-card {
     background: url('./assets/images/bg-today-small.svg') no-repeat center/cover;
