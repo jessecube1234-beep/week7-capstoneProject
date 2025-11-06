@@ -1,0 +1,158 @@
+/* Color variables from styleguide */
+:root {
+    --neutral-900: hsl(243, 96%, 9%);
+    --neutral-800: hsl(243, 27%, 20%);
+    --neutral-700: hsl(243, 23%, 24%);
+    --neutral-600: hsl(243, 23%, 30%);
+    --neutral-300: hsl(240, 6%, 70%);
+    --neutral-200: hsl(250, 6%, 84%);
+    --neutral-0: hsl(0, 0%, 100%);
+
+    --orange-500: hsl(28, 100%, 52%);
+    --blue-500: hsl(233, 67%, 56%);
+    --blue-700: hsl(248, 70%, 36%);
+}
+
+body {
+    background-color: var(--neutral-900);
+    color: var(--neutral-0);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+}
+
+h1,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+h2 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-style: bold;
+    font-size: 50px;
+}
+
+.custom-placeholder::placeholder {
+    color: white;
+}
+
+/* Drop down */
+.dropdown-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.icon-units {
+    position: absolute;
+    left: 10px;
+    /* From style guide */
+    width: 18px;
+    height: 18px;
+}
+
+#drop-down {
+    /* removes default browser arrow (my epic final battle for level 2, fought the browser putting its own arrow in)*/
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-700);
+    color: var(--neutral-200);
+    /* Giving space for icons */
+    padding-left: 35px;
+    padding-right: 30px;
+    /* Adds MY dropdown arrow */
+    background-image: url('./assets/images/icon-dropdown.svg');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px auto;
+}
+
+
+
+/* Search Bar */
+#search-form {
+    margin-top: 4rem;
+}
+
+#city-input {
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-700);
+    color: var(--neutral-0);
+}
+
+/* Current Weather Card */
+.current-weather-card {
+    min-height: 375px;
+    background: url('./assets/images/bg-today-large.svg') no-repeat center/cover;
+}
+
+#date {
+    color: var(--neutral-300);
+}
+
+#temp {
+    font-family: 'DM Sans', sans-serif;
+    font-style: italic;
+    font-size: 120px;
+}
+
+/* Feels Like */
+.feels-like-card {
+    min-height: 150px;
+    background-color: var(--neutral-700);
+    color: var(--neutral-300);
+}
+
+#feels-like {
+    color: var(--neutral-200);
+}
+
+/* Humidity */
+.humidity-card {
+    min-height: 150px;
+    background-color: var(--neutral-700);
+    color: var(--neutral-300);
+}
+
+#humidity {
+    color: var(--neutral-200);
+}
+
+/* Wind */
+.wind-card {
+    min-height: 150px;
+    background-color: var(--neutral-700);
+    color: var(--neutral-300);
+}
+
+#wind {
+    color: var(--neutral-200);
+}
+
+/* Precipitation */
+.precipitation-card {
+    min-height: 150px;
+    background-color: var(--neutral-700);
+    color: var(--neutral-300);
+}
+
+#precipitation {
+    color: var(--neutral-200);
+}
+
+/* Media Query For Mobile */
+@media (max-width: 768px) {
+    .current-weather-card {
+        background: url('./assets/images/bg-today-small.svg') no-repeat center/cover;
+    }
+
+    #temp {
+        font-family: 'DM Sans', sans-serif;
+        font-style: italic;
+        font-size: 60px;
+    }
+}
